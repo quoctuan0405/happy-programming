@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  username   String
+  email      String   @unique
+  password   String
+  role       String
+  mentor     Mentor?
+  mentee     Mentee?
+  is_deleted Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Mentor {
+  id              Int            @id @default(autoincrement())
+  user            User           @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id         Int            @unique
+  phone_number    String?
+  resume_summary  String?
+  work_experience String?
+  education       String?
+  certificate     String?
+  skills          MentorSkills[]
+  requests        Request[]
+  is_deleted      Boolean        @default(false)
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+}
+
+model MentorSkills {
+  mentor     Mentor   @relation(fields: [mentor_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mentor_id  Int
+  skills     Skills   @relation(fields: [skills_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  skills_id  Int
+  is_deleted Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@id([mentor_id, skills_id])
+}
+
+model Skills {
+  id         Int            @id @default(autoincrement())
+  name       String         @unique
+  mentors    MentorSkills[]
+  is_deleted Boolean        @default(false)
+  created_at DateTime       @default(now())
+  updated_at DateTime       @updatedAt
+}
+
+model Mentee {
+  id         Int       @id @default(autoincrement())
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user_id    Int       @unique
+  requests   Request[]
+  is_deleted Boolean   @default(false)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+}
+
+model Request {
+  id         Int      @id @default(autoincrement())
+  mentor     Mentor   @relation(fields: [mentor_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  mentor_id  Int
+  mentee     Mentee   @relation(fields: [mentee_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  mentee_id  Int
+  approved   Boolean  @default(false)
+  is_deleted Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
