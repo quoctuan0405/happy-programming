@@ -8,12 +8,14 @@ https://www.microsoft.com/en-us/sql-server/sql-server-downloads
 
 https://nodejs.org/en/download
 
-## Step 3: Edit DATABASE_URL in .env
+## Step 3: Create new .env file
 
-Open a file called .env and edit the DATABASE_URL property:
+Create new file called .env at the project folder and add the following:
 
 ```
 DATABASE_URL="sqlserver://localhost:1433;database=[YOUR_DATABASE_HERE];user=[YOUR_USERNAME_HERE];password=[YOUR_PASSWORD_HERE];trustServerCertificate=true"
+JWT_KEY="[JUST_TYPE_A_BUNCH_OF_RANDOM_CHARACTERS]"
+JWT_EXPIRES="1w"
 ```
 
 ## Step 4: Install dependencies
